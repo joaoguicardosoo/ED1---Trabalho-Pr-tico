@@ -3,7 +3,6 @@
 #include <string.h>
 #include <math.h>
 #include <stdbool.h>
-#define MAX 10
 // O cardápio tem todos os itens disponíveis, que são descritos em uma lista (por exemplo, um array).
 // Cada item possui: identificação (inteiro), a descrição (nome do item) e o preço (real).
 // Saída do restaurante, os clientes fazem uma fila grande
