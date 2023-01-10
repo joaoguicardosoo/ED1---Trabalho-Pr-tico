@@ -1,85 +1,54 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <math.h>
+#include <stdlib.h>
 #include <stdbool.h>
-// O cardápio tem todos os itens disponíveis, que são descritos em uma lista (por exemplo, um array).
-// Cada item possui: identificação (inteiro), a descrição (nome do item) e o preço (real).
-// Saída do restaurante, os clientes fazem uma fila grande
-// Estrutura estática sequencial quanto uma estrutura dinâmica encadeada
-
-
-
-
 
 struct cardapio
 {
     int id;
-    char descricao[50];
+    char desc[20];
     float preco;
 };
-typedef struct cardapio Cardapio; // Cardapio é um apelido para struct cardapio
+typedef struct cardapio Cardapio;
 
-struct lista
+Cardapio criarCardapio(Cardapio *menu, int qtd)
 {
-    Cardapio *itens;
-    int qtd = MAX;
-};
-typedef struct lista Lista; // Lista é um apelido para struct lista
-
-
-
-
-//////////////////////////////////////////////////////////////////
-struct node {               // Estrutura de dados para a fila
-    char info;
-    struct node *next;
-};
-
-typedef struct node Node;   // Node é um apelido para struct node
-
-struct pilha {              // Estrutura de dados para a pilha
-    Node *topo;
-};
-
-typedef struct pilha Pilha; // Pilha é um apelido para struct pilha
-
-
-Node *newNode()             // Cria um novo nó
-{
-    Node *n;
-    n = malloc(sizeof(Node));
-    return n;
+    menu = malloc(qtd * sizeof(Cardapio));
+    if (menu == NULL)
+    {
+        printf("Falha na alocacao\n");
+        exit(1);
+    }
+    return *menu;
 }
 
+int inserirCardapio(Cardapio *menu){
+    FILE *arq;
+    if (fopen("cardapio.txt", "r") == NULL)
+    {
+        printf("Falha na abertura do arquivo\n");
+        return -1;
+    }
 
-void deleteNode(Node *n)    // Deleta o nó e libera a memória
+    while (fscanf(arq, "%d %s %f", &menu->id, menu->desc, &menu->preco) != EOF);
+
+    return 0;
+
+}
+int printacardapio(Cardapio *menu){
+    for (int i=1; i <=3; i++){
+        printf("%d %s %f", &menu[i]->id, &menu[i]->desc, &menu[i]->preco);
+    }
+
+
+}
+
+int main()
 {
-    if (n != NULL) free(n);
+    Cardapio *menu;
+    int qtd = 3; //Quantidade de itens no menu
+    criarCardapio(menu, qtd);
+    inserirCardapio(menu);
+    printacardapio(menu);
+    return 0;
 }
 
-
-Pilha *criar()              // Cria uma pilha vazia
-{
-    Pilha *P;
-    P = malloc(sizeof(Pilha));
-    if (P != NULL) P->topo = NULL; // pilha vazia
-    return P;
-}
-
-
-
-
-
-
-
-
-
-
-
-int main (){
-    
-  
-  
- return 0; 
-}
