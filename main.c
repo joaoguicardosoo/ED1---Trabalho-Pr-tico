@@ -36,7 +36,7 @@ int inserirCardapio(Cardapio *menu){
 }
 int printacardapio(Cardapio *menu){
     for (int i=1; i <=3; i++){
-        printf("%d %s %f", &menu[i]->id, &menu[i]->desc, &menu[i]->preco);
+        printf("%d %s %f", menu[i].id, menu[i].desc, menu[i].preco);
     }
 
 
