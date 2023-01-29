@@ -7,6 +7,7 @@
 #define MAX_CLIENTS 15
 
 
+//Estrutura do Cardapio
 typedef struct {
     int id;
     char nome[30];
@@ -20,12 +21,6 @@ typedef struct {
     float total;
     int chocolate; // 0 = branco, 1 = preto
 } Cliente;
-
-void adicionarItem(Cliente* cliente, Cardapio comanda)
-{
-    cliente->qtdItens++;
-    cliente->total += comanda.preco;
-}
 
 //Cria o cardapio
 Cardapio *criarCardapio()
@@ -50,12 +45,6 @@ int inserirCardapio(Cardapio *menu, int id, char nome[20], float preco)
 
     return 0;
 }
-//Destroi o cardapio
-int destruir(Cardapio *menu)
-{
-    free(menu);
-    return 0;
-}
 
 //Carrega os itens no cardapio
 void leItens(Cardapio *menu)
@@ -77,9 +66,17 @@ void leItens(Cardapio *menu)
         fscanf(file, "%f", &menu[i].preco);
     }
 
-    fclose(file);
+    fclose(file); //Fecha o arquivo
 }
 
+//Função para adicionar itens na comanda do cliente
+void adicionarItem(Cliente* cliente, Cardapio comanda)
+{
+    cliente->qtdItens++; //Adiciona o item
+    cliente->total += comanda.preco; //Calcula o preço total dos itens adicionados
+}
+
+//Função para imprimir na tela o Cardapio que foi lido do arquivo
 void imprimeComanda(Cardapio *menu)
 {
     printf("Cardapio: \n");
@@ -87,13 +84,20 @@ void imprimeComanda(Cardapio *menu)
             printf("%d - %s - R$ %.2f\n", menu[i].id, menu[i].nome, menu[i].preco);
 }
 
+//Destroi o cardapio
+int destruir(Cardapio *menu)
+{
+    free(menu);
+    return 0;
+}
+
 int main()
 {
-    srand(time(NULL)); //função para que a cada execução os clientes e valores sejam diferentes
+    srand(time(NULL)); //Função para que a cada execução do programa os itens consumidos pelos clientes sejam diferentes e, consequentemente, o valor total será diferente
 
-    Cardapio *menu;
-    int op = 0; //Opcao do usuario
+    Cardapio *menu; //Inicializa o menu
     menu = criarCardapio(MAX_ITEMS); //Cria o cardapio
+
     leItens(menu); //Lê os itens do cardapio que estão no arquivo
     imprimeComanda(menu); //Imprime os itens do cardapio
 
@@ -105,9 +109,9 @@ int main()
     // Adiciona clientes na fila e itens na comanda de cada cliente
     for (int i = 0; i < MAX_CLIENTS; i++) {
         fila[fim].id = i;
-        adicionarItem(&fila[fim], menu[rand() % MAX_ITEMS]); //adiciona aleatoriamente
-        adicionarItem(&fila[fim], menu[rand() % MAX_ITEMS]); //adiciona aleatoriamente
-        fila[fim].chocolate = rand() % 2;
+        adicionarItem(&fila[fim], menu[rand() % MAX_ITEMS]); //adiciona aleatoriamente itens na comanda
+        adicionarItem(&fila[fim], menu[rand() % MAX_ITEMS]); //adiciona aleatoriamente itens na comanda
+        fila[fim].chocolate = rand() % 2; //adiciona aleatoriamente o chocolate (preto ou branco) para o cliente
         fim++;
     }
 
