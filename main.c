@@ -1,70 +1,37 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <time.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<time.h>
+
+#define MAX_ITEMS 18
+#define MAX_CLIENTS 15
 
 
-struct cardapio
-{
+typedef struct {
     int id;
-    char desc[20];
+    char nome[30];
     float preco;
-};
-typedef struct cardapio Cardapio;
+} Cardapio;
 
-struct comanda{
-    char nome[20];
-    float valor;
+// Estrutura para o cliente e sua comanda
+typedef struct {
     int id;
-    struct comanda *next;
-};
-typedef struct comanda Comanda;
+    int qtdItens;
+    float total;
+    int chocolate; // 0 = branco, 1 = preto
+} Cliente;
 
-struct fila{
-    struct comanda *inicio;
-    struct comanda *fim;
-};
-typedef struct fila Fila;
-
-//Cria a fila de comandas
-Fila *criarFila(){
-    Fila *f = (Fila *)malloc(sizeof(Fila));
-    f->inicio = NULL;
-    f->fim = NULL;
-    return f;
-}
-//Gera um numero aleatorio de 0 a 100 para o id da comanda
-int gerarId(){
-    srand(time(NULL));
-    int id = rand() % 100;
-    return id;
-}
-
-//Insere a comanda na fila
-int insereFila(Fila *f, char nome[20], int id){
-    Comanda *c = (Comanda *)malloc(sizeof(Comanda));
-    strcpy(c->nome, nome);
-    c->id = id;
-    
-    if(f->inicio == NULL){
-        f->inicio = c;
-        f->fim = c;
-        c->next = NULL;
-    }
-    else{
-        f->fim->next = c;
-        f->fim = c;
-        c->next = NULL;
-    }
-    return 0;
+void adicionarItem(Cliente* cliente, Cardapio comanda)
+{
+    cliente->qtdItens++;
+    cliente->total += comanda.preco;
 }
 
 //Cria o cardapio
-Cardapio *criarCardapio(int qtd)
+Cardapio *criarCardapio()
 {
     Cardapio *menu;
-    menu = (Cardapio *)malloc(qtd * sizeof(Cardapio));
+    menu = (Cardapio *)malloc(MAX_ITEMS * sizeof(Cardapio));
     if (menu == NULL)
     {
         printf("Falha na alocacao de memoria\n");
@@ -75,11 +42,11 @@ Cardapio *criarCardapio(int qtd)
 }
 
 //Insere os itens no cardapio
-int inserirCardapio(Cardapio *menu, int id, char desc[20], float preco, int aux)
+int inserirCardapio(Cardapio *menu, int id, char nome[20], float preco)
 {
-    menu[aux].id = id;
-    strcpy(menu[aux].desc, desc);
-    menu[aux].preco = preco;
+    menu->id = id;
+    strcpy(menu->nome, nome);
+    menu->preco = preco;
 
     return 0;
 }
@@ -91,45 +58,66 @@ int destruir(Cardapio *menu)
 }
 
 //Carrega os itens no cardapio
-void carregaItens(Cardapio *menu){
-    inserirCardapio(menu, 1, "Pizza", 55.00, 0);
-    inserirCardapio(menu, 2, "Coca-cola", 6.00, 1);
-    inserirCardapio(menu, 3, "Hamburguer", 25.00, 2);
-    inserirCardapio(menu, 4, "Batata frita", 13.00, 3);
-    inserirCardapio(menu, 5, "Suco", 7.50, 4);
-    inserirCardapio(menu, 6, "Agua", 3.00, 5);
-    inserirCardapio(menu, 7, "Pastel", 6.50, 6);
-    inserirCardapio(menu, 8, "Macarrão", 19.00, 7);
-    inserirCardapio(menu, 9, "Picanha", 89.00, 8);
-    inserirCardapio(menu, 10, "Salgado", 3.50, 9);
-    inserirCardapio(menu, 11, "Caipirinha", 15.00, 10);
+void leItens(Cardapio *menu)
+{
+
+    FILE *file = fopen("cardapio.txt", "r"); //funcao para abrir o arquivo "cardapio" em modo "somente leitura"
+
+    if(!file)//Se houve erro na abertura
+    {
+        printf("Arquivo nao pode ser aberto!\n"); //retorna erro
+
+        return 0;
+    }
+
+    for(int i = 0; i < MAX_ITEMS; i++) //funcao para ler lista do txt e inserir na estrutura "cardapio"
+    {
+        fscanf(file, "%d", &menu[i].id);
+        fscanf(file, "%s", &menu[i].nome);
+        fscanf(file, "%f", &menu[i].preco);
+    }
+
+    fclose(file);
 }
 
-
+void imprimeComanda(Cardapio *menu)
+{
+    printf("Cardapio: \n");
+    for (int i = 0; i < MAX_ITEMS; i++)
+            printf("%d - %s - R$ %.2f\n", menu[i].id, menu[i].nome, menu[i].preco);
+}
 
 int main()
 {
+    srand(time(NULL)); //função para que a cada execução os clientes e valores sejam diferentes
+
     Cardapio *menu;
-    int qtd = 11; // Quantidade de itens no menu
     int op = 0; //Opcao do usuario
-    char nome[20]; //Nome do usuario
-    int id; //Id da comanda
-    menu = criarCardapio(qtd);
-    carregaItens(menu);
-    printf("Digite uma opção\n");
-    printf("1 - Fazer pedido\n");
-    scanf("%d", &op);
-    if(op == 1)
-    {
-        printf("Digite o nome do cliente:\n");
-        scanf("%s", nome);
-        id = gerarId();
-        printf("Ola %s, o que deseja pedir?Um pedido por vez. Seu número de comanda é: %d\n", nome, id);
-        for (int i = 0; i < qtd; i++)
-            printf("%d - %s - R$ %.2f\n", menu[i].id, menu[i].desc, menu[i].preco);
-        
+    menu = criarCardapio(MAX_ITEMS); //Cria o cardapio
+    leItens(menu); //Lê os itens do cardapio que estão no arquivo
+    imprimeComanda(menu); //Imprime os itens do cardapio
+
+    printf("\n");
+
+    Cliente fila[MAX_CLIENTS]; //Cria a fila de Clientes
+    int inicio = 0, fim = 0;
+
+    // Adiciona clientes na fila e itens na comanda de cada cliente
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        fila[fim].id = i;
+        adicionarItem(&fila[fim], menu[rand() % MAX_ITEMS]); //adiciona aleatoriamente
+        adicionarItem(&fila[fim], menu[rand() % MAX_ITEMS]); //adiciona aleatoriamente
+        fila[fim].chocolate = rand() % 2;
+        fim++;
     }
-    
-    destruir(menu);
+
+    // Imprime o valor total do consumo de cada cliente e o tipo de chocolate recebido
+    while (inicio != fim) {
+        printf("Cliente %d: R$%.2f - Chocolate %s\n", fila[inicio].id, fila[inicio].total, fila[inicio].chocolate == 0 ? "branco" : "preto");
+        inicio++;
+    }
+
+    destruir(menu); //Destroi o cardapio
+
     return 0;
 }
