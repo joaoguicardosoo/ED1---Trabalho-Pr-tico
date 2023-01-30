@@ -56,13 +56,13 @@ void leItens(Cardapio *menu)
     {
         printf("Arquivo nao pode ser aberto!\n"); //retorna erro
 
-        return 0;
+        exit(1);
     }
 
     for(int i = 0; i < MAX_ITEMS; i++) //funcao para ler lista do txt e inserir na estrutura "cardapio"
     {
         fscanf(file, "%d", &menu[i].id);
-        fscanf(file, "%s", &menu[i].nome);
+        fscanf(file, "%s", menu[i].nome);
         fscanf(file, "%f", &menu[i].preco);
     }
 
