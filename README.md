@@ -15,4 +15,4 @@ restaurante.c: esse arquivo contém a função principal (main) e a implementaç
 restaurante.h: esse arquivo contém as declarações das funções do TAD.
 
 # Fluxo
-<img src="https://i.imgur.com/EirmSw0.png" width="300px" />
+<img src="https://i.imgur.com/EirmSw0.png" width="400px" />
