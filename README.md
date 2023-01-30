@@ -13,3 +13,6 @@ Usamos uma função para inserir aleatoriamente os itens do cardapio na comanda 
 
 restaurante.c: esse arquivo contém a função principal (main) e a implementação das funções do TAD.
 restaurante.h: esse arquivo contém as declarações das funções do TAD.
+
+# Fluxo
+<img src="https://i.imgur.com/EirmSw0.png" width="300px" />
